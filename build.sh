@@ -7,6 +7,8 @@ set -u
 set -e
 #CPU cores
 NUM_CORES_PLUS_ONE=$(expr $(nproc) + 1)
+#jump to upper folder from the build.sh
+cd ../"$(dirname "$0")"
 
 ### INPUTCHECK ###
 #check if arguments empty
@@ -46,20 +48,19 @@ else
 	exit 1;
 fi
 
+echo "----- cloneing  -----"
+git clone -c advice.detachedHead=false https://github.com/Freifunk-Siegerland/sites.git sites -b $3
 
 #check sites exist
 for SITE in "${@:4}"
 do
-	if [[ -d $SITE ]]; then
+	if [[ -d sites/$SITE ]]; then
 		echo "----- will build for "$SITE" -----"
 	else
 		echo "!!!!! $SITE site not found !!!!!"
 		exit 1;
 	fi
 done
-
-#jump to upper folder from the build.sh
-cd ../"$(dirname "$0")"
 
 #check for Secretkey exist and/or empty
 KEYFILE=~/.signkey/key.secret
@@ -193,12 +194,12 @@ do
 
 	#copy .htaccess for hideing the manifest from all
 	echo "----- copying .htaccess to ../"$OUTPUTPATH"/sysupgrade/ -----"
-	cp -r sites/.htaccess  $OUTPUTPATH/sysupgrade/
+	cp -r buildscript/.htaccess  $OUTPUTPATH/sysupgrade/
 
 	#copy logs and infos
 	[[ ! -d $OUTPUTPATH/.infos ]] && mkdir -p $OUTPUTPATH/.infos
 	cp -r gluon/site $OUTPUTPATH/.infos/
-	cp -r sites/build.sh $OUTPUTPATH/.infos/
+	cp -r buildscript/build.sh $OUTPUTPATH/.infos/
 	echo "$GLUON_RELEASE" > $OUTPUTPATH/.infos/GLUON_RELEASE
 	echo "$3" > $OUTPUTPATH/.infos/GLUON_VERSION
 	echo "----- FINISHED building "$GLUON_BRANCH" firmware for "$SITE" -----"

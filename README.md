@@ -2,6 +2,7 @@
 mkdir bauen<br />
 cd bauen<br />
 git clone https://github.com/OETiger/buildscript.git buildscript <br />
+ <br />
 cd buildscript<br />
 chmod +x build.sh<br />
 rm -rf ../outputs/*<br />
@@ -11,6 +12,6 @@ rm -rf ../outputs/*<br />
 
 ## Beispiel  Ordnerstruktur
 ~/bauen/buildscript	#build.sh path
-~/bauen/sites/		#SiWi-sites git clon (wird von build.sh erstellt)<br />
+~/bauen/sites/		#sites git clon (wird von build.sh geclont wenn nicht vorhanden)<br />
 ~/bauen/gluon/		#gluon git clon (wird von build.sh erstellt)<br />
 ~/bauen/outputs/	#output für Firmware Images & Logs<br />

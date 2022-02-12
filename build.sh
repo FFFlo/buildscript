@@ -48,8 +48,12 @@ else
 	exit 1;
 fi
 
-echo "----- cloneing  -----"
-git clone -c advice.detachedHead=false https://github.com/Freifunk-Siegerland/sites.git sites -b $3
+if [[ -d sites ]]; then
+	echo "----- found a sites folder -----"
+else
+	echo "----- cloneing sites -----"
+	git clone -c advice.detachedHead=false https://github.com/Freifunk-Siegerland/sites.git sites -b $3
+fi
 
 #check sites exist
 for SITE in "${@:4}"
@@ -146,21 +150,21 @@ do
 	make update
 
 	BUILDARRAY=(\
-	"ar71xx-generic" \
+	#"ar71xx-generic" \
 	"ar71xx-tiny" \
-	"ar71xx-nand" \
-	#"ath79-generic" \
-	#"ath79-nand" \
-	#"ipq40xx-generic" \
-	#"ipq806x-generic" \
-	#"lantiq-xrx200" \
-	#"lantiq-xway" \
-	"mpc85xx-generic" \
-	"mpc85xx-p1020" \
-	#"ramips-mt7620" \
-	#"ramips-mt7621" \
-	#"ramips-mt76x8" \
-	#"ramips-rt305x" \
+	#"ar71xx-nand" \
+	#"ath79-generic" \ #2020?
+	#"ath79-nand" \ #2020?
+	#"ipq40xx-generic" \ #2020?
+	#"ipq806x-generic" \ #2020?
+	#"lantiq-xrx200" \ #2020?
+	#"lantiq-xway" \ #2020?
+	#"mpc85xx-generic" \
+	#"mpc85xx-p1020" \
+	#"ramips-mt7620" \ #2020?
+	#"ramips-mt7621" \ #2020?
+	#"ramips-mt76x8" \ #2020?
+	#"ramips-rt305x" \ #2020?
 	)
 
 	for NOWBUILDING in "${BUILDARRAY[@]}"

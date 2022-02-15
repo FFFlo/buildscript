@@ -49,7 +49,7 @@ else
 fi
 
 if [[ -d sites ]]; then
-	echo "----- found a sites folder -----"
+	echo "----- found an existing sites folder -----"
 else
 	echo "----- cloneing sites -----"
 	git clone -c advice.detachedHead=false https://github.com/Freifunk-Siegerland/sites.git sites -b $3
@@ -149,23 +149,40 @@ do
 	echo "----- make update -----"
 	make update
 
-	BUILDARRAY=(\
-	#"ar71xx-generic" \
-	"ar71xx-tiny" \
-	#"ar71xx-nand" \
-	#"ath79-generic" \ #2020?
-	#"ath79-nand" \ #2020?
-	#"ipq40xx-generic" \ #2020?
-	#"ipq806x-generic" \ #2020?
-	#"lantiq-xrx200" \ #2020?
-	#"lantiq-xway" \ #2020?
-	#"mpc85xx-generic" \
-	#"mpc85xx-p1020" \
-	#"ramips-mt7620" \ #2020?
-	#"ramips-mt7621" \ #2020?
-	#"ramips-mt76x8" \ #2020?
-	#"ramips-rt305x" \ #2020?
-	)
+	#set GLUON_TARGETs
+	case $3 in
+	v2017*)
+		BUILDARRAY=(\
+			"ar71xx-generic" \
+			"ar71xx-tiny" \
+			"ar71xx-nand" \
+			#"brcm2708-bcm2708" \
+			#"brcm2708-bcm2709" \
+			"mpc85xx-generic" \
+			"ramips-mt7621" \
+			#"x86-generic" \
+			#"x86-geode" \
+			#"x86-64" \
+		)
+		;;
+
+	v2018*)
+		BUILDARRAY=(\
+			"ar71xx-generic" \
+			"ar71xx-tiny" \
+			"ar71xx-nand" \
+			#"brcm2708-bcm2708" \
+			#"brcm2708-bcm2709" \
+			"mpc85xx-generic" \
+			"mpc85xx-p1020" \
+			"ramips-mt7621" \
+			#"sunxi-cortexa7" \
+			#"x86-generic" \
+			#"x86-geode" \
+			#"x86-64" \
+		)
+		;;
+	esac
 
 	for NOWBUILDING in "${BUILDARRAY[@]}"
 	do

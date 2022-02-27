@@ -10,6 +10,11 @@ NUM_CORES_PLUS_ONE=$(expr $(nproc) + 1)
 #jump to upper folder from the build.sh
 cd ../"$(dirname "$0")"
 
+# set this to your sites git
+SITESURL=https://github.com/Freifunk-Siegerland/sites.git
+# set this to ur signingkeyfile
+KEYFILE=~/.signkey/key.secret
+
 ### INPUTCHECK ###
 #check if arguments empty
 if [[ $# -eq 0 ]]; then
@@ -48,14 +53,15 @@ else
 	exit 1;
 fi
 
+#check/clone site git
 if [[ -d sites ]]; then
 	echo "----- found an existing sites folder -----"
 else
-	echo "----- cloneing sites -----"
-	git clone -c advice.detachedHead=false https://github.com/Freifunk-Siegerland/sites.git sites -b $3
+	echo "----- cloneing sites from $SITESURL -----"
+	git clone -c advice.detachedHead=false $SITESURL sites -b $3
 fi
 
-#check sites exist
+#check given sites exist
 for SITE in "${@:4}"
 do
 	if [[ -d sites/$SITE ]]; then
@@ -67,7 +73,6 @@ do
 done
 
 #check for Secretkey exist and/or empty
-KEYFILE=~/.signkey/key.secret
 if [[ -f $KEYFILE ]]; then
 	if [[ -s $KEYFILE ]]; then
 		echo "----- Manifest will be signed with keyfile $KEYFILE -----"
@@ -102,7 +107,7 @@ else
 	fi
 fi
 
-### check/create gluon ###
+### check/clone gluon ###
 if [[ -s gluon/GLUON_VERSION ]]; then
 	if [[ "$3" != "$(cat gluon/GLUON_VERSION)" ]]; then
 		while true; do

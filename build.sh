@@ -20,20 +20,20 @@ KEYFILE=~/.signkey/key.secret
 if [[ $# -eq 0 ]]; then
 	echo "Run this script with the following arguments:"
 	echo "./build.sh <1> <2> <3> <4> <n>"
-	echo "1: GLUON_BRANCH for manifest: s=stable, b=beta, e=experimental"
+	echo "1: GLUON_AUTOUPDATER_BRANCH for manifest: s=stable, b=beta, e=experimental"
 	echo "2: GLUON_RELEASE: in format XX.XX(.??)"
 	echo "3: GLUON_VERSION to build from: in format 'v20XX.?X.?X', example v2017.1.8"
 	echo "4-n: Site XXXX to build for. Example 'sihb'"
 	exit 1;
 fi
 
-#GLUON_BRANCH format check
+#GLUON_AUTOUPDATER_BRANCH format check
 case "${1}" in
-	"")						echo "!!!!! No GLUON_BRANCH option was specified. !!!!!"; 	exit 1 ;;
-	stable)				echo "----- GLUON_BRANCH = stable -----"; export GLUON_BRANCH=$1 ;;
-	beta)					echo "----- GLUON_BRANCH = beta -----"; export GLUON_BRANCH=$1  ;;
-	experimental)	echo "----- GLUON_BRANCH = experimental -----"; export GLUON_BRANCH=$1 ;;
-	*)						echo "!!!!! Unknown GLUON_BRANCH !!!!!"; 					exit 1 ;;
+	"")						echo "!!!!! No GLUON_AUTOUPDATER_BRANCH option was specified. !!!!!"; 	exit 1 ;;
+	stable)				echo "----- GLUON_AUTOUPDATER_BRANCH = stable -----"; export GLUON_AUTOUPDATER_BRANCH=$1 ;;
+	beta)					echo "----- GLUON_AUTOUPDATER_BRANCH = beta -----"; export GLUON_AUTOUPDATER_BRANCH=$1  ;;
+	experimental)	echo "----- GLUON_AUTOUPDATER_BRANCH = experimental -----"; export GLUON_AUTOUPDATER_BRANCH=$1 ;;
+	*)						echo "!!!!! Unknown GLUON_AUTOUPDATER_BRANCH !!!!!"; 					exit 1 ;;
 esac
 
 #GLUON_RELEASE format check
@@ -187,35 +187,61 @@ do
 			#"x86-64" \
 		)
 		;;
+
+	v2021*)
+		BUILDARRAY=(\
+			"ar71xx-generic" \
+			"ar71xx-tiny" \
+			"ar71xx-nand" \
+			"ath79-generic" \
+			#"brcm2708-bcm2708" \
+			#"brcm2708-bcm2709" \
+			"ipq40xx-generic" \
+			"ipq806x-generic" \
+			"lantiq-xrx200" \
+			"lantiq-xway" \
+			"mpc85xx-generic" \
+			"mpc85xx-p1020" \
+			"ramips-mt7620" \
+			"ramips-mt7621" \
+			"ramips-mt76x8" \
+			"ramips-rt305x" \
+			#"sunxi-cortexa7" \
+			#"x86-generic" \
+			#"x86-geode" \
+			#"x86-legacy" \
+			#"x86-64" \
+		)
+		;;
 	esac
 
 	for NOWBUILDING in "${BUILDARRAY[@]}"
 	do
 		echo "----- cleaning $NOWBUILDING -----"
 		make clean GLUON_TARGET=$NOWBUILDING
-		echo "----- building $GLUON_BRANCH $NOWBUILDING for $SITE -----"
-		make -j $NUM_CORES_PLUS_ONE GLUON_TARGET=$NOWBUILDING
+		echo "----- building $GLUON_AUTOUPDATER_BRANCH $NOWBUILDING for $SITE -----"
+		make -j $NUM_CORES_PLUS_ONE GLUON_TARGET=$NOWBUILDING V=s BUILD_LOG=1
 	done
 
-	echo "----- generating "$GLUON_BRANCH" manifest for "$SITE" -----"
+	echo "----- generating "$GLUON_AUTOUPDATER_BRANCH" manifest for "$SITE" -----"
 	make manifest
 
 	#zu bauen Pfad springen
 	cd ..
 
 	if ! [[ $LESECRETKEY = "" ]]; then
-		echo "----- signing "$GLUON_BRANCH" manifest for "$SITE" -----"
-		gluon/contrib/sign.sh $KEYFILE gluon/output/images/sysupgrade/$GLUON_BRANCH.manifest
+		echo "----- signing "$GLUON_AUTOUPDATER_BRANCH" manifest for "$SITE" -----"
+		gluon/contrib/sign.sh $KEYFILE gluon/output/images/sysupgrade/$GLUON_AUTOUPDATER_BRANCH.manifest
 	else
-		echo "----- NOT signing "$GLUON_BRANCH" manifest for "$SITE" -----"
+		echo "----- NOT signing "$GLUON_AUTOUPDATER_BRANCH" manifest for "$SITE" -----"
 	fi
 
-	OUTPUTPATH=outputs/$SITE/$GLUON_BRANCH
+	OUTPUTPATH=outputs/$SITE/$GLUON_AUTOUPDATER_BRANCH
 
 	[[ ! -d $OUTPUTPATH ]] && mkdir -p $OUTPUTPATH
 
 	#output kopieren ohne backup
-	echo "----- copying "$GLUON_BRANCH" images to ../"$OUTPUTPATH"/ -----"
+	echo "----- copying "$GLUON_AUTOUPDATER_BRANCH" images to ../"$OUTPUTPATH"/ -----"
 	rsync -av --remove-source-files gluon/output/images/ $OUTPUTPATH/
 
 	#copy .htaccess for hideing the manifest from all
@@ -228,6 +254,6 @@ do
 	cp -r buildscript/build.sh $OUTPUTPATH/.infos/
 	echo "$GLUON_RELEASE" > $OUTPUTPATH/.infos/GLUON_RELEASE
 	echo "$3" > $OUTPUTPATH/.infos/GLUON_VERSION
-	echo "----- FINISHED building "$GLUON_BRANCH" firmware for "$SITE" -----"
+	echo "----- FINISHED building "$GLUON_AUTOUPDATER_BRANCH" firmware for "$SITE" -----"
 
 done

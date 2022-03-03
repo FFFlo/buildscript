@@ -140,11 +140,11 @@ fi
 for SITE in "${@:4}"
 do
 	#clean gluon folders
-	[[ -f gluon/site/site.conf ]] && rm -rf gluon/site/*
+	[[ -d gluon/site ]] && rm -rf gluon/site
 	[[ -d gluon/output/images ]] && rm -rf gluon/output/*
 
-	#check and create folders
-	[[ ! -d gluon/site ]] && mkdir -p gluon/site
+	#create folders
+	mkdir -p gluon/site
 
 	echo "----- copy site "$SITE" -----"
 	cp -r sites/$SITE/* gluon/site/
@@ -220,7 +220,7 @@ do
 		echo "----- cleaning $NOWBUILDING -----"
 		make clean GLUON_TARGET=$NOWBUILDING
 		echo "----- building $GLUON_AUTOUPDATER_BRANCH $NOWBUILDING for $SITE -----"
-		make -j $NUM_CORES_PLUS_ONE GLUON_TARGET=$NOWBUILDING V=s BUILD_LOG=1
+		make -j $NUM_CORES_PLUS_ONE GLUON_TARGET=$NOWBUILDING
 	done
 
 	echo "----- generating "$GLUON_AUTOUPDATER_BRANCH" manifest for "$SITE" -----"

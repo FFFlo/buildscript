@@ -108,33 +108,53 @@ else
 fi
 
 ### check/clone gluon ###
-if [[ -s gluon/GLUON_VERSION ]]; then
-	if [[ "$3" != "$(cat gluon/GLUON_VERSION)" ]]; then
-		while true; do
-			echo "----- GLUON_VERSION does not match the allready cloned one -----"
-			read -p "Delete and clone "$3" [y/n]? " -n 1 -r
-			echo    # (optional) move to a new line
-			if [[ $REPLY =~ ^[Yy]$ ]]; then
-				rm -rf gluon
-				echo "----- gluon folder deleted -----"
-				echo "----- clone git "$3" -----"
-				git clone -c advice.detachedHead=false https://github.com/freifunk-gluon/gluon.git gluon -b $3
-				echo "$3" > gluon/GLUON_VERSION
-				break
-			else
-				echo "----- gluon folder not deleted -----"
-				exit 0;
-			fi
-		done
-	else
-		echo "----- GLUON_VERSION "$3" allready cloned -----"
-	fi
-else
-	[[ -d gluon/ ]] && rm -rf gluon/
-	echo "----- clone git "$3" -----"
-	git clone -c advice.detachedHead=false https://github.com/freifunk-gluon/gluon.git gluon -b $3
-	echo "$3" > gluon/GLUON_VERSION
-fi
+#if [[ -s gluon/GLUON_VERSION ]]; then
+#	if [[ "$3" != "$(cat gluon/GLUON_VERSION)" ]]; then
+#		while true; do
+#			echo "----- GLUON_VERSION does not match the allready cloned one -----"
+#			read -p "Delete and clone "$3" [y/n]? " -n 1 -r
+#			echo    # (optional) move to a new line
+#			if [[ $REPLY =~ ^[Yy]$ ]]; then
+#				rm -rf gluon
+#				echo "----- gluon folder deleted -----"
+#				echo "----- clone git "$3" -----"
+#				git clone -c advice.detachedHead=false https://github.com/freifunk-gluon/gluon.git gluon -b $3
+#				echo "$3" > gluon/GLUON_VERSION
+#				break
+#			else
+#				echo "----- gluon folder not deleted -----"
+#				exit 0;
+#			fi
+#		done
+#	else
+#		echo "----- GLUON_VERSION "$3" allready cloned -----"
+#	fi
+#else
+#	[[ -d gluon/ ]] && rm -rf gluon/
+#	echo "----- clone git "$3" -----"
+#	git clone -c advice.detachedHead=false https://github.com/freifunk-gluon/gluon.git gluon -b $3
+#	echo "$3" > gluon/GLUON_VERSION
+#fi
+
+#PATCHEN
+#[[ ! -d gluon ]] && git clone -c advice.detachedHead=false https://github.com/freifunk-gluon/gluon.git gluon -b $3
+#cd gluon
+#git remote set-url origin https://github.com/freifunk-gluon/gluon.git
+#git fetch origin
+#rm -rf packages
+#git checkout -q --force $3
+#git clean -fd;
+#[ `git branch --list patched` ] && git branch -D patched
+#git checkout -B patching
+#if [[ -d ../sites/patches ]]; then
+#	echo "----- apply patches -----"
+#	git apply --ignore-space-change --ignore-whitespace --whitespace=nowarn --verbose ../sites/patches/*.patch
+#	git clean -fd
+#	git checkout -B patched
+#	git branch -D patching
+#fi
+#git branch -M patched
+#cd ..
 
 ### BUILDING ###
 for SITE in "${@:4}"

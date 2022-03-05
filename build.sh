@@ -37,12 +37,16 @@ case "${1}" in
 esac
 
 #GLUON_RELEASE format check
-if [[ $2 == [0-9][0-9].[0-9][0-9].+([0-9]) ]] || [[ $2 == [0-9][0-9].[0-9][0-9] ]]; then
-	echo "----- GLUON_RELEASE = "$2" -----"
-	export GLUON_RELEASE=$2
+if [[ $2 == 'date' ]]; then
+	export GLUON_RELEASE="$(date +%Y%m%d%H%M)"
 else
-	echo "!!!!! GLUON_RELEASE not format XX.XX(.??) !!!!!"
-	exit 1;
+	if [[ $2 == [0-9][0-9].[0-9][0-9].+([0-9]) ]] || [[ $2 == [0-9][0-9].[0-9][0-9] ]]; then
+		echo "----- GLUON_RELEASE = "$2" -----"
+		export GLUON_RELEASE=$2
+	else
+		echo "!!!!! GLUON_RELEASE not format XX.XX(.??) !!!!!"
+		exit 1;
+	fi
 fi
 
 #GLUON_VERSION format check

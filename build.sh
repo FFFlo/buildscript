@@ -247,8 +247,19 @@ do
 		make -j $NUM_CORES_PLUS_ONE GLUON_TARGET=$NOWBUILDING
 	done
 
+	TMP_GLUON_AUTOUPDATER_BRANCH=$GLUON_AUTOUPDATER_BRANCH
+
+	export GLUON_AUTOUPDATER_BRANCH=stable
 	echo "----- generating "$GLUON_AUTOUPDATER_BRANCH" manifest for "$SITE" -----"
 	make manifest
+	export GLUON_AUTOUPDATER_BRANCH=beta
+	echo "----- generating "$GLUON_AUTOUPDATER_BRANCH" manifest for "$SITE" -----"
+	make manifest
+	export GLUON_AUTOUPDATER_BRANCH=experimental
+	echo "----- generating "$GLUON_AUTOUPDATER_BRANCH" manifest for "$SITE" -----"
+	make manifest
+
+	export GLUON_AUTOUPDATER_BRANCH=$TMP_GLUON_AUTOUPDATER_BRANCH
 
 	#zu bauen Pfad springen
 	cd ..

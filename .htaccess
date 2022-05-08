@@ -4,3 +4,11 @@ deny from all
 #allow from <IP>
 </Files>
 
+#OR
+
+#<Files *.manifest>
+#order allow,deny
+#allow from from all
+#deny from <IP>
+#</Files>
+

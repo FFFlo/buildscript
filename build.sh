@@ -21,7 +21,7 @@ if [[ $# -eq 0 ]]; then
 	echo "Run this script with the following arguments:"
 	echo "./build.sh <1> <2> <3> <4> <n>"
 	echo "1: GLUON_AUTOUPDATER_BRANCH for manifest: s=stable, b=beta, e=experimental"
-	echo "2: GLUON_RELEASE: in format XX.XX(.??)"
+	echo "2: GLUON_RELEASE: in format XX.XX(.??) or 'date' for YearMonthDay[...]"
 	echo "3: GLUON_VERSION to build from: in format 'v20XX.?X.?X', example v2017.1.8"
 	echo "4-n: Site XXXX to build for. Example 'sihb'"
 	exit 1;
@@ -141,24 +141,24 @@ fi
 #fi
 
 #PATCHEN
-#[[ ! -d gluon ]] && git clone -c advice.detachedHead=false https://github.com/freifunk-gluon/gluon.git gluon -b $3
-#cd gluon
-#git remote set-url origin https://github.com/freifunk-gluon/gluon.git
-#git fetch origin
-#rm -rf packages
-#git checkout -q --force $3
-#git clean -fd;
-#[ `git branch --list patched` ] && git branch -D patched
-#git checkout -B patching
-#if [[ -d ../sites/patches ]]; then
-#	echo "----- apply patches -----"
-#	git apply --ignore-space-change --ignore-whitespace --whitespace=nowarn --verbose ../sites/patches/*.patch
-#	git clean -fd
-#	git checkout -B patched
-#	git branch -D patching
-#fi
-#git branch -M patched
-#cd ..
+[[ ! -d gluon ]] && git clone -c advice.detachedHead=false https://github.com/freifunk-gluon/gluon.git gluon -b $3
+cd gluon
+git remote set-url origin https://github.com/freifunk-gluon/gluon.git
+git fetch origin
+rm -rf packages
+git checkout -q --force $3
+git clean -fd;
+[ `git branch --list patched` ] && git branch -D patched
+git checkout -B patching
+if [[ -d ../sites/patches ]]; then
+	echo "----- apply patches -----"
+	git apply --ignore-space-change --ignore-whitespace --whitespace=nowarn --verbose ../sites/patches/*.patch
+	git clean -fd
+	git checkout -B patched
+	git branch -D patching
+fi
+git branch -M patched
+cd ..
 
 ### BUILDING ###
 for SITE in "${@:4}"
@@ -266,7 +266,10 @@ do
 
 	if ! [[ $LESECRETKEY = "" ]]; then
 		echo "----- signing "$GLUON_AUTOUPDATER_BRANCH" manifest for "$SITE" -----"
-		gluon/contrib/sign.sh $KEYFILE gluon/output/images/sysupgrade/$GLUON_AUTOUPDATER_BRANCH.manifest
+		#gluon/contrib/sign.sh $KEYFILE gluon/output/images/sysupgrade/$GLUON_AUTOUPDATER_BRANCH.manifest
+		gluon/contrib/sign.sh $KEYFILE gluon/output/images/sysupgrade/stable.manifest
+		gluon/contrib/sign.sh $KEYFILE gluon/output/images/sysupgrade/beta.manifest
+		gluon/contrib/sign.sh $KEYFILE gluon/output/images/sysupgrade/experimental.manifest
 	else
 		echo "----- NOT signing "$GLUON_AUTOUPDATER_BRANCH" manifest for "$SITE" -----"
 	fi

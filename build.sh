@@ -278,6 +278,7 @@ do
 	cp -r buildscript/build.sh $OUTPUTPATH/.infos/
 	echo "$GLUON_RELEASE" > $OUTPUTPATH/.infos/GLUON_RELEASE
 	echo "$3" > $OUTPUTPATH/.infos/GLUON_VERSION
+	echo "DENY FROM ALL" > $OUTPUTPATH/.infos/.htaccess
 	echo "----- FINISHED building "$GLUON_AUTOUPDATER_BRANCH" firmware for "$SITE" -----"
 
 done
